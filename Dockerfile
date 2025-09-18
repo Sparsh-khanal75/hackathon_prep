@@ -1,21 +1,21 @@
-# Use Python 3.9 slim image as base
+# Use Python 3.9 slim image
 FROM python:3.9-slim
 
-# Set working directory inside container
+# Set working directory
 WORKDIR /app
 
-# Copy requirements file first (for better caching)
+# Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install Python dependencies
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy your application code
+# Copy application files
 COPY main.py .
 COPY iris_model.pkl .
 
-# Expose port 8000 (FastAPI default)
-EXPOSE 8000
+# Expose port (Render uses PORT env variable)
+EXPOSE $PORT
 
-# Command to run your application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Command to run the application
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT

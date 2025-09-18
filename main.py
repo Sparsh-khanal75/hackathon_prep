@@ -68,7 +68,7 @@ def get_ui():
             </div>
             <div>
                 <label>Petal Length (cm):</label><br>
-                <input type="number" id="petal_length" step="0.1" placeholder="1.4" required>
+                <input type="number" id="petal_length" step="0.1" required>
             </div>
             <div>
                 <label>Petal Width (cm):</label><br>
