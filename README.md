@@ -68,3 +68,7 @@ prometheus.yml     scrape config for a local Prometheus
 - **Next steps:** tests and a GitHub Actions pipeline, plus input validation ranges.
 
 These ideas are applied in my later project [urlguard](https://github.com/Sparsh-khanal75/malicious-url-detector), which uses real Prometheus histograms, a CI quality gate and a non-root multi-stage Docker image.
+
+## Author
+
+**Sparsh Khanal** · [GitHub](https://github.com/Sparsh-khanal75) · [LinkedIn](https://www.linkedin.com/in/Sparsh-khanal75)
