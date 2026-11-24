@@ -17,6 +17,15 @@ total_api_calls = 0
 total_prediction_time = 0.0
 prediction_history = []  # Store recent predictions for graphs
 
+START_TIME = time.time()
+
+# Accuracy measured on the held-out test split by model_train.py
+try:
+    with open('model_info.json') as f:
+        MODEL_ACCURACY = float(json.load(f)['accuracy'])
+except Exception:
+    MODEL_ACCURACY = None
+
 # Try to load model with error checking
 try:
     model = joblib.load('iris_model.pkl')
@@ -50,7 +59,8 @@ def predict_flower(flower: Flower):
     data = [[flower.sepal_length, flower.sepal_width, 
              flower.petal_length, flower.petal_width]]
     
-    prediction = model.predict(data)[0]
+    proba = model.predict_proba(data)[0]
+    prediction = int(proba.argmax())
     flowers = ["setosa", "versicolor", "virginica"]
     predicted_flower = flowers[prediction]
     
@@ -78,7 +88,7 @@ def predict_flower(flower: Flower):
     if len(prediction_history) > 50:
         prediction_history = prediction_history[-50:]
     
-    return {"predicted_flower": predicted_flower, "confidence": "high", "duration": f"{prediction_duration:.4f}s"}
+    return {"predicted_flower": predicted_flower, "confidence": round(float(proba.max()), 3), "duration": f"{prediction_duration:.4f}s"}
 
 @app.get("/ui", response_class=HTMLResponse)
 def get_ui():
@@ -538,8 +548,8 @@ def get_stats():
     
     # Calculate additional insights
     most_predicted = max(prediction_counts, key=prediction_counts.get) if total_predictions > 0 else "None"
-    accuracy_score = "95.2%"  # Simulated accuracy
-    uptime = "100%"  # Simulated uptime
+    accuracy_score = f"{MODEL_ACCURACY:.1%}" if MODEL_ACCURACY is not None else "unknown"
+    uptime = f"{time.time() - START_TIME:.0f} seconds"
     
     return {
         "🌸 ML API Statistics": {
@@ -592,13 +602,13 @@ prediction_time_average_seconds {avg_time:.6f}
 # TYPE total_predictions_made counter
 total_predictions_made {total_preds}
 
-# HELP model_accuracy_percent Model accuracy percentage
-# TYPE model_accuracy_percent gauge
-model_accuracy_percent 95.2
+# HELP model_test_accuracy Accuracy on the held-out test split (from model_info.json)
+# TYPE model_test_accuracy gauge
+model_test_accuracy {MODEL_ACCURACY if MODEL_ACCURACY is not None else "NaN"}
 
-# HELP api_uptime_percent API uptime percentage
-# TYPE api_uptime_percent gauge
-api_uptime_percent 100.0
+# HELP process_uptime_seconds Seconds since the API started
+# TYPE process_uptime_seconds gauge
+process_uptime_seconds {time.time() - START_TIME:.0f}
 """
     return Response(metrics, media_type="text/plain")
 

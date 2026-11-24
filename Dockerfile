@@ -12,7 +12,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application files
 COPY main.py .
-COPY iris_model.pkl .
+COPY iris_model.pkl model_info.json ./
+
+# Default port for local runs; Render overrides PORT at runtime
+ENV PORT=8000
 
 # Expose port (Render uses PORT env variable)
 EXPOSE $PORT
