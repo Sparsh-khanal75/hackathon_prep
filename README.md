@@ -18,6 +18,14 @@ The model is deliberately simple (Iris dataset). The point of the project is the
 | `GET /health` | Health check for the hosting platform |
 | `GET /docs` | Auto-generated OpenAPI docs |
 
+## Screenshot
+
+The built-in web UI at `/ui`: a prediction form, live request statistics, the class distribution and response time. This shot was taken after a handful of real predictions against the trained model.
+
+![Iris ML API web UI](docs/screenshots/ui.png)
+
+Chart.js is vendored in `static/` and served by the API itself, so the dashboards also work offline or behind a firewall that blocks CDNs.
+
 ## Model
 
 `model_train.py` trains a Random Forest (100 trees) on the 150-sample Iris dataset with an 80/20 split and saves `iris_model.pkl` plus `model_info.json`. Test accuracy was **100% on 30 held-out samples**. Iris is an easy, tiny dataset, so this number says little about real-world performance.
