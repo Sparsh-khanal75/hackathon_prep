@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Response
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import joblib
 import time
@@ -10,6 +11,9 @@ app = FastAPI(
     description="Professional ML API with real-time monitoring and analytics",
     version="1.0.0"
 )
+
+# Chart.js is vendored in static/ so the dashboards work offline and without a CDN
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Simple global counters for reliable metrics
 prediction_counts = {"setosa": 0, "versicolor": 0, "virginica": 0}
@@ -97,7 +101,7 @@ def get_ui():
     <html>
     <head>
         <title>🌸 Iris ML API - Analytics Dashboard</title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+        <script src="/static/chart.min.js"></script>
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { 
@@ -452,7 +456,7 @@ def get_dashboard():
     <html>
     <head>
         <title>🌸 ML Analytics Dashboard</title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+        <script src="/static/chart.min.js"></script>
         <style>
             body { 
                 font-family: Arial, sans-serif; 
